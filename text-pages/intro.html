@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SF Crime — Text Card</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #0d0f12;
+        --surface: #13161c;
+        --card-bg: #181c24;
+        --border: rgba(255, 255, 255, 0.08);
+        --accent: #c8402a;
+        --accent-dim: #7a2418;
+        --gold: #c9a84c;
+        --text-hi: #e8e4dc;
+        --text-mid: #9a9690;
+        --text-lo: #4e4b47;
+        --mono: "DM Mono", monospace;
+        --serif: "DM Serif Display", serif;
+        --sans: "DM Sans", sans-serif;
+      }
+
+      html,
+      body {
+        height: 100%;
+        background: var(--bg);
+        color: var(--text-hi);
+        font-family: var(--sans);
+        font-weight: 300;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Grid overlay texture */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.015) 1px,
+            transparent 1px
+          );
+        background-size: 48px 48px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Vignette */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at center,
+          transparent 40%,
+          rgba(0, 0, 0, 0.7) 100%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ── TOP BAR ── */
+      .topbar {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 2.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .badge {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--accent);
+        border: 1px solid var(--accent-dim);
+        padding: 3px 8px;
+        border-radius: 2px;
+        text-transform: uppercase;
+      }
+
+      .site-title {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        color: var(--text-mid);
+        text-transform: uppercase;
+      }
+
+      .progress-bar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .progress-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--text-lo);
+        transition: background 0.3s;
+      }
+      .progress-dot.active {
+        background: var(--accent);
+      }
+      .progress-dot.done {
+        background: var(--gold);
+      }
+
+      /* ── MAIN LAYOUT ── */
+      main {
+        position: relative;
+        z-index: 10;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1.5rem;
+      }
+
+      /* ── CHAPTER LABEL ── */
+      .chapter-label {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.1s ease forwards;
+      }
+
+      /* ── CARD ── */
+      .card {
+        width: 100%;
+        max-width: 640px;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 2.5rem 2.75rem;
+        position: relative;
+        opacity: 0;
+        animation: fadeUp 0.7s 0.25s ease forwards;
+      }
+
+      /* accent stripe top-left */
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3px;
+        height: 56px;
+        background: var(--accent);
+        border-radius: 6px 0 0 0;
+      }
+
+      .card-eyebrow {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        color: var(--text-mid);
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+      }
+
+      .card-title {
+        font-family: var(--serif);
+        font-size: clamp(1.6rem, 4vw, 2.4rem);
+        line-height: 1.15;
+        color: var(--text-hi);
+        margin-bottom: 1.25rem;
+      }
+
+      .card-title em {
+        color: var(--accent);
+        font-style: italic;
+      }
+
+      .card-divider {
+        width: 40px;
+        height: 1px;
+        background: var(--gold);
+        margin-bottom: 1.25rem;
+        opacity: 0.6;
+      }
+
+      .card-body {
+        font-size: 0.92rem;
+        line-height: 1.75;
+        color: var(--text-mid);
+        margin-bottom: 1.75rem;
+      }
+
+      .card-body strong {
+        color: var(--text-hi);
+        font-weight: 500;
+      }
+
+      /* stat pills */
+      .stat-row {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+      }
+
+      .stat-pill {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        padding: 6px 12px;
+      }
+
+      .stat-value {
+        font-family: var(--mono);
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-hi);
+      }
+
+      .stat-label {
+        font-size: 0.7rem;
+        color: var(--text-mid);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      /* ── ARROW / CTA ── */
+      .cta-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.25rem;
+      }
+
+      .cta-hint {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        color: var(--text-lo);
+        text-transform: uppercase;
+      }
+
+      .arrow-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: var(--text-hi);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        padding: 10px 18px;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        font-family: var(--sans);
+        font-weight: 400;
+      }
+
+      .arrow-link:hover {
+        border-color: var(--accent);
+        background: rgba(200, 64, 42, 0.08);
+      }
+
+      .arrow-link:hover .arrow-icon {
+        transform: translateX(5px);
+      }
+
+      .arrow-icon {
+        display: inline-block;
+        transition: transform 0.2s ease;
+        color: var(--accent);
+        font-size: 1.1rem;
+      }
+
+      /* ── BOTTOM BAR ── */
+      footer {
+        position: relative;
+        z-index: 10;
+        border-top: 1px solid var(--border);
+        padding: 1rem 2.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .footer-note {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--text-lo);
+      }
+
+      /* data strip */
+      .data-strip {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.1em;
+        color: var(--text-lo);
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 40%;
+        mask-image: linear-gradient(
+          to right,
+          transparent,
+          black 15%,
+          black 85%,
+          transparent
+        );
+      }
+
+      /* ── ANIMATIONS ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="badge">SF Crime Data</span>
+        <span class="site-title">2008 — 2014 · Post-Crisis Analysis</span>
+      </div>
+      <div class="progress-bar" aria-label="Progress">
+        <div class="progress-dot active" title="Introduction"></div>
+        <div class="progress-dot" title="Crime Trends"></div>
+        <div class="progress-dot" title="Districts"></div>
+        <div class="progress-dot" title="Categories"></div>
+        <div class="progress-dot" title="Conclusion"></div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main>
+      <p class="chapter-label"> 01</p>
+
+      <article class="card" role="main">
+        <p class="card-eyebrow">Introduction</p>
+
+        <h1 class="card-title">
+          Did the recession <em>reshape</em> crime in San Francisco?
+        </h1>
+
+        <div class="card-divider"></div>
+
+        <p class="card-body">
+          <!-- When the financial crisis hit in 2008, unemployment in San Francisco
+          nearly doubled within two years. The following visualization traces
+          <strong>annual crime incident reports</strong>
+          from 2003 to 2017, asking whether economic collapse left a visible
+          scar in the data — or whether the city's crime landscape moved to its
+          own rhythm. -->
+        </p>
+
+        <div class="stat-row">
+          <div class="stat-pill">
+            <span class="stat-value">1.3M+</span>
+            <span class="stat-label">incidents recorded</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-value">10</span>
+            <span class="stat-label">crime categories</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-value">2007–17</span>
+            <span class="stat-label">time span</span>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <a class="arrow-link" href="../text-pages/background-info.html">
+            Continue
+            <span class="arrow-icon">→</span>
+          </a>
+        </div>
+      </article>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <a
+        class="footer-note"
+        href="https://data.sfgov.org/Public-Safety/Police-Department-Incident-Reports-Historical-2003/tmnf-yvry/about_data"
+        >Source: SFPD Incident Reports via DataSF</a
+    </footer>
+  </body>
+</html>

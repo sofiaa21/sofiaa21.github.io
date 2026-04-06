@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SF Crime — Text Card</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #0d0f12;
+        --surface: #13161c;
+        --card-bg: #181c24;
+        --border: rgba(255, 255, 255, 0.08);
+        --accent: #c8402a;
+        --accent-dim: #7a2418;
+        --gold: #c9a84c;
+        --text-hi: #e8e4dc;
+        --text-mid: #9a9690;
+        --text-lo: #4e4b47;
+        --mono: "DM Mono", monospace;
+        --serif: "DM Serif Display", serif;
+        --sans: "DM Sans", sans-serif;
+      }
+
+      html,
+      body {
+        height: 100%;
+        background: var(--bg);
+        color: var(--text-hi);
+        font-family: var(--sans);
+        font-weight: 300;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Grid overlay texture */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.015) 1px,
+            transparent 1px
+          );
+        background-size: 48px 48px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Vignette */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at center,
+          transparent 40%,
+          rgba(0, 0, 0, 0.7) 100%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ── TOP BAR ── */
+      .topbar {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 2.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .badge {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--accent);
+        border: 1px solid var(--accent-dim);
+        padding: 3px 8px;
+        border-radius: 2px;
+        text-transform: uppercase;
+      }
+
+      .site-title {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        color: var(--text-mid);
+        text-transform: uppercase;
+      }
+
+      .progress-bar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .progress-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--text-lo);
+        transition: background 0.3s;
+      }
+      .progress-dot.active {
+        background: var(--accent);
+      }
+      .progress-dot.done {
+        background: var(--gold);
+      }
+
+      /* ── MAIN LAYOUT ── */
+      main {
+        position: relative;
+        z-index: 10;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+        padding: 3rem 1.5rem;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 2rem;
+        width: 100%;
+        max-width: 1400px;
+      }
+
+      @media (max-width: 960px) {
+        .card-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ── CHAPTER LABEL ── */
+      .chapter-label {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.1s ease forwards;
+      }
+
+      /* ── CARD ── */
+      .card {
+        width: 100%;
+        max-width: 640px;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 2.5rem 2.75rem;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        opacity: 0;
+        animation: fadeUp 0.7s 0.25s ease forwards;
+      }
+
+      /* accent stripe top-left */
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3px;
+        height: 56px;
+        background: var(--accent);
+        border-radius: 6px 0 0 0;
+      }
+
+      .card-eyebrow {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        color: var(--text-mid);
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+      }
+
+      .card-title {
+        font-family: var(--serif);
+        font-size: clamp(1.6rem, 4vw, 2.4rem);
+        line-height: 1.15;
+        color: var(--text-hi);
+        margin-bottom: 1.25rem;
+      }
+
+      .card-title em {
+        color: var(--accent);
+        font-style: italic;
+      }
+
+      .card-divider {
+        width: 40px;
+        height: 1px;
+        background: var(--gold);
+        margin-bottom: 1.25rem;
+        opacity: 0.6;
+      }
+
+      .card-body {
+        font-size: 0.92rem;
+        line-height: 1.75;
+        color: var(--text-mid);
+        margin-bottom: 1.75rem;
+        flex: 1;
+      }
+
+      .card-body strong {
+        color: var(--text-hi);
+        font-weight: 500;
+      }
+
+      .cta-row {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-top: 2rem;
+      }
+
+      .cta-row--left {
+        justify-content: flex-start;
+      }
+
+      .arrow-link--back .arrow-icon {
+        margin-right: 0.75rem;
+      }
+
+      /* stat pills */
+      .stat-row {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+      }
+
+      .stat-pill {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        padding: 6px 12px;
+      }
+
+      .stat-value {
+        font-family: var(--mono);
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-hi);
+      }
+
+      .stat-label {
+        font-size: 0.7rem;
+        color: var(--text-mid);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      /* district list */
+      .district-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .district-list li {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        padding: 8px 12px;
+        font-family: var(--mono);
+        font-size: 0.85rem;
+        color: var(--text-mid);
+        text-align: center;
+      }
+
+      /* focus crime table */
+      .table-wrapper {
+        overflow-x: auto;
+        margin-bottom: 2rem;
+      }
+
+      .focus-crime-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        line-height: 1.4;
+      }
+
+      .focus-crime-table th,
+      .focus-crime-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .focus-crime-table th {
+        font-family: var(--mono);
+        font-weight: 500;
+        color: var(--text-hi);
+        background: rgba(255, 255, 255, 0.02);
+        border-right: 1px solid var(--border);
+        width: 30%;
+      }
+
+      .focus-crime-table td {
+        color: var(--text-mid);
+      }
+
+      /* ── ARROW / CTA ── */
+      .cta-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.25rem;
+      }
+
+      .cta-row--right {
+        justify-content: flex-end;
+      }
+
+      .cta-hint {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        color: var(--text-lo);
+        text-transform: uppercase;
+      }
+
+      .arrow-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: var(--text-hi);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        padding: 10px 18px;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        font-family: var(--sans);
+        font-weight: 400;
+      }
+
+      .arrow-link:hover {
+        border-color: var(--accent);
+        background: rgba(200, 64, 42, 0.08);
+      }
+
+      .arrow-link:hover .arrow-icon {
+        transform: translateX(5px);
+      }
+
+      .arrow-link--back:hover .arrow-icon {
+        transform: translateX(-5px);
+      }
+
+      .arrow-icon {
+        display: inline-block;
+        transition: transform 0.2s ease;
+        color: var(--accent);
+        font-size: 1.1rem;
+      }
+
+      /* ── BOTTOM BAR ── */
+      footer {
+        position: relative;
+        z-index: 10;
+        border-top: 1px solid var(--border);
+        padding: 1rem 2.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .footer-note {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--text-lo);
+      }
+
+      /* data strip */
+      .data-strip {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.1em;
+        color: var(--text-lo);
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 40%;
+        mask-image: linear-gradient(
+          to right,
+          transparent,
+          black 15%,
+          black 85%,
+          transparent
+        );
+      }
+
+      /* ── ANIMATIONS ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="badge">SF Crime Data</span>
+        <span class="site-title">2008 — 2014 · Post-Crisis Analysis</span>
+      </div>
+      <div class="progress-bar" aria-label="Progress">
+        <div class="progress-dot done" title="Introduction"></div>
+        <div class="progress-dot active" title="Crime Trends"></div>
+        <div class="progress-dot" title="Districts"></div>
+        <div class="progress-dot" title="Categories"></div>
+        <div class="progress-dot" title="Conclusion"></div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main>
+      <p class="chapter-label"> 01</p>
+
+      <div class="card-grid">
+        <article class="card" role="main">
+          <p class="card-eyebrow">Basic info</p>
+
+          <h1 class="card-title">San Francisco police districts</h1>
+
+          <div class="card-divider"></div>
+
+          <div class="card-body">
+            <p>
+              A quick reference for the SFPD patrol districts and the focus crimes used in this investigation.
+            </p>
+
+            <h2>District list</h2>
+            <ul class="district-list">
+              <li>Taraval</li>
+              <li>Mission</li>
+              <li>Northern</li>
+              <li>Ingleside</li>
+              <li>Southern</li>
+              <li>Bayview</li>
+              <li>Park</li>
+              <li>Richmond</li>
+              <li>Tenderloin</li>
+              <li>Central</li>
+            </ul>
+
+            <h2>Focus crimes and categories</h2>
+            <div class="table-wrapper">
+              <table class="focus-crime-table">
+                <thead>
+                  <tr>
+                    <th>Focus crime</th>
+                    <th>Crime categories</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>Property Crime</th>
+                    <td>VEHICLE THEFT, TRESPASS, ARSON, LARCENY/THEFT, BURGLARY, VANDALISM, STOLEN PROPERTY, BAD CHECKS</td>
+                  </tr>
+                  <tr>
+                    <th>Violent Crime</th>
+                    <td>ASSAULT, ROBBERY, KIDNAPPING, EXTORTION</td>
+                  </tr>
+                  <tr>
+                    <th>Non-Criminal</th>
+                    <td>NON-CRIMINAL, MISSING PERSON, RECOVERED VEHICLE, SUICIDE</td>
+                  </tr>
+                  <tr>
+                    <th>Financial Crime</th>
+                    <td>FRAUD, FORGERY/COUNTERFEITING, BRIBERY, EMBEZZLEMENT</td>
+                  </tr>
+                  <tr>
+                    <th>Other/Suspicious</th>
+                    <td>OTHER OFFENSES, SUSPICIOUS OCC</td>
+                  </tr>
+                  <tr>
+                    <th>Drug & Alcohol</th>
+                    <td>DRIVING UNDER THE INFLUENCE, DRUG/NARCOTIC, DRUNKENNESS, LIQUOR LAWS</td>
+                  </tr>
+                  <tr>
+                    <th>Administrative</th>
+                    <td>WARRANTS, SECONDARY CODES</td>
+                  </tr>
+                  <tr>
+                    <th>Weapons</th>
+                    <td>WEAPON LAWS</td>
+                  </tr>
+                  <tr>
+                    <th>Sex Offenses</th>
+                    <td>SEX OFFENSES, FORCIBLE, SEX OFFENSES, NON FORCIBLE</td>
+                  </tr>
+                  <tr>
+                    <th>Public Order</th>
+                    <td>PROSTITUTION, LOITERING, DISORDERLY CONDUCT, GAMBLING, PORNOGRAPHY/OBSCENE MAT, TREA</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="cta-row cta-row--left">
+            <a class="arrow-link arrow-link--back" href="../text-pages/intro.html">
+              <span class="arrow-icon">←</span>
+              Back
+            </a>
+          </div>
+        </article>
+
+        <article class="card">
+          <p class="card-eyebrow">Context</p>
+
+          <h1 class="card-title">Source links and relevance</h1>
+
+          <div class="card-divider"></div>
+
+          <div class="card-body">
+            <p>
+              These references explain how local reporting, policy, and historical context relate to our analysis of crime patterns.
+            </p>
+
+            <ul class="source-list">
+              <!-- Add linked article titles here, then explain how each source relates to the investigation -->
+            </ul>
+          </div>
+          <div class="cta-row cta-row--right">
+            <a class="arrow-link" href="../visualizations/sf_crime_indexed_trends.html">
+              Next
+              <span class="arrow-icon">→</span>
+            </a>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <a
+        class="footer-note"
+        href="https://data.sfgov.org/Public-Safety/Police-Department-Incident-Reports-Historical-2003/tmnf-yvry/about_data"
+        >Source: SFPD Incident Reports via DataSF</a
+    </footer>
+  </body>
+</html>

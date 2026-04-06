@@ -1,30 +1,551 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SF Crime — Indexed Trends</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>SF Crime Indexed Trends</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        body { margin:0; background:#0a0a0f; font-family:'DM Mono',monospace; }
-        .header {
-            display:flex; justify-content:space-between; align-items:center;
-            padding:14px 32px; background:#13131c; border-bottom:2px solid #2a2a3d;
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #0d0f12;
+        --surface: #13161c;
+        --card-bg: #181c24;
+        --border: rgba(255, 255, 255, 0.08);
+        --accent: #c8402a;
+        --accent-dim: #7a2418;
+        --gold: #c9a84c;
+        --text-hi: #e8e4dc;
+        --text-mid: #9a9690;
+        --text-lo: #4e4b47;
+        --mono: "DM Mono", monospace;
+        --serif: "DM Serif Display", serif;
+        --sans: "DM Sans", sans-serif;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text-hi);
+        font-family: var(--sans);
+        font-weight: 300;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Texture Overlays */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.015) 1px,
+            transparent 1px
+          );
+        background-size: 48px 48px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at center,
+          transparent 40%,
+          rgba(0, 0, 0, 0.7) 100%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .topbar {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 2.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .badge {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--accent);
+        border: 1px solid var(--accent-dim);
+        padding: 3px 8px;
+        border-radius: 2px;
+        text-transform: uppercase;
+      }
+
+      .site-title {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        color: var(--text-mid);
+        text-transform: uppercase;
+      }
+
+      .progress-bar {
+        display: flex;
+        gap: 6px;
+      }
+
+      .progress-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--text-lo);
+      }
+
+      .progress-dot.done {
+        background: var(--gold);
+      }
+      .progress-dot.active {
+        background: var(--accent);
+      }
+
+      main {
+        position: relative;
+        z-index: 10;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 3rem 1.5rem;
+        gap: 3rem;
+      }
+
+      .chapter-label {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--gold);
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        align-self: flex-start;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        animation: fadeUp 0.6s ease forwards;
+      }
+
+      .card {
+        width: 100%;
+        max-width: 1200px;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 2.5rem;
+        opacity: 0;
+        animation: fadeUp 0.7s 0.2s ease forwards;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3px;
+        height: 56px;
+        background: var(--accent);
+      }
+
+      .card-title {
+        font-family: var(--serif);
+        font-size: clamp(1.6rem, 4vw, 2.4rem);
+        margin-bottom: 1rem;
+      }
+
+      .card-divider {
+        width: 40px;
+        height: 1px;
+        background: var(--gold);
+        margin-bottom: 1.5rem;
+      }
+
+      .chart-container {
+        width: 100%;
+        height: 520px;
+        margin-top: 1rem;
+      }
+
+      .figure-caption {
+        margin-top: 1rem;
+        color: var(--text-mid);
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+
+      .cta-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+      }
+
+      .arrow-link {
+        text-decoration: none;
+        color: var(--text-hi);
+        border: 1px solid var(--border);
+        padding: 10px 18px;
+        font-size: 0.8rem;
+        font-family: var(--mono);
+        transition: 0.2s;
+      }
+
+      .arrow-link:hover {
+        border-color: var(--accent);
+        background: rgba(200, 64, 42, 0.1);
+      }
+
+      footer {
+        z-index: 10;
+        border-top: 1px solid var(--border);
+        padding: 1.5rem 2.5rem;
+        font-family: var(--mono);
+        font-size: 10px;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
         }
-        .header-brand { font-family:'Playfair Display',serif; font-size:1.35rem; font-weight:900; color:#e8e8f0; }
-        .header-brand span { color:#ef5350; }
-        .header-meta { font-size:0.68rem; color:#6b6b88; text-align:right; }
-        .chart-container { height:calc(100vh - 90px); padding:20px; }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
     </style>
-</head>
-<body>
-    <div class="header">
-        <div class="header-brand">San Francisco <span>Crime Index</span></div>
-        <div class="header-meta">Source: SFPD crime incident data, 2003–2025</div>
-    </div>
-    <div class="chart-container">
-        <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.1.0.min.js" integrity="sha256-Ei4740bWZhaUTQuD6q9yQlgVCMPBz6CZWhevDYPv93A=" crossorigin="anonymous"></script>                <div id="12d05f28-e6cc-400d-a7f3-31486c76f204" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("12d05f28-e6cc-400d-a7f3-31486c76f204")) {                    Plotly.newPlot(                        "12d05f28-e6cc-400d-a7f3-31486c76f204",                        [{"hovertemplate":"\u003cb\u003eAdministrative\u003c\u002fb\u003e\u003cbr\u003eYear: %{x}\u003cbr\u003eIndex (2007=100): %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#6366F1","width":1.5},"marker":{"color":"#6366F1","size":4},"mode":"lines+markers","name":"Administrative","opacity":0.6,"x":{"dtype":"i2","bdata":"1wfYB9kH2gfbB9wH3QfeB98H4AfhBw=="},"y":{"dtype":"f8","bdata":"AAAAAAAAWUCAxgp7SH1VQLyWJu3BQVZAz7EgLfa\u002fV0B3Y0hODtpXQN8W7fc8ildAilHg11jGWkBHDnVZqkFYQOj6gXKa41hAZ1BHf7rHVUBIugTCcB1TQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003eDrug & Alcohol\u003c\u002fb\u003e\u003cbr\u003eYear: %{x}\u003cbr\u003eIndex (2007=100): %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#F59E0B","width":3},"marker":{"color":"#F59E0B","size":6},"mode":"lines+markers","name":"Drug & Alcohol","opacity":1.0,"x":{"dtype":"i2","bdata":"1wfYB9kH2gfbB9wH3QfeB98H4AfhBw=="},"y":{"dtype":"f8","bdata":"AAAAAAAAWUDq\u002fB24ldFbQGOHSr5Z4VxAHZxcfGx0VkB7wp6wJ2xRQGx0cHLxMVBA0EIJpte+UUBE+skMFrxLQGUGC95J6UZA36xwuT8nRkCvYd10\u002fg5BQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003eFinancial Crime\u003c\u002fb\u003e\u003cbr\u003eYear: %{x}\u003cbr\u003eIndex (2007=100): %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#10B981","width":1.5},"marker":{"color":"#10B981","size":4},"mode":"lines+markers","name":"Financial Crime","opacity":0.6,"x":{"dtype":"i2","bdata":"1wfYB9kH2gfbB9wH3QfeB98H4AfhBw=="},"y":{"dtype":"f8","bdata":"AAAAAAAAWUDs2dzLlDpZQLV\u002fTtLVp1dAPpt7mVLHUkAZwiLy2PdRQJcIrJEqmlJAqkdPVvqCUkDLEBaRx75SQDRK\u002fIwSv1NA8fG3bhe4UEA8tPspt2pPQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003eNon-Criminal\u003c\u002fb\u003e\u003cbr\u003eYear: %{x}\u003cbr\u003eIndex (2007=100): %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#64748B","width":1.5},"marker":{"color":"#64748B","size":4},"mode":"lines+markers","name":"Non-Criminal","opacity":0.6,"x":{"dtype":"i2","bdata":"1wfYB9kH2gfbB9wH3QfeB98H4AfhBw=="},"y":{"dtype":"f8","bdata":"AAAAAAAAWUBXZUp25E1XQBpCUsQSdlZAbr2VHAdoWkC2GkiCo3VeQLjUENRPaWBAXNnbGT01ZEAe4PFUTJhhQGbZHUcQOGJAayOh\u002fYfkYEAJgQRkJ4pgQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003eOther\u002fSuspicious\u003c\u002fb\u003e\u003cbr\u003eYear: %{x}\u003cbr\u003eIndex (2007=100): %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#8B5CF6","width":1.5},"marker":{"color":"#8B5CF6","size":4},"mode":"lines+markers","name":"Other\u002fSuspicious","opacity":0.6,"x":{"dtype":"i2","bdata":"1wfYB9kH2gfbB9wH3QfeB98H4AfhBw=="},"y":{"dtype":"f8","bdata":"AAAAAAAAWUAZx2KH0tFcQNBoUB50+F1ApTiP\u002ffpuW0AyqrtzIwxaQLwFjhES7lhAzMYnTcKyWUAYe1\u002f+UZ9aQHl5sZ1npFpAPZxtAMI3WkDV\u002fP285glZQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003eProperty Crime\u003c\u002fb\u003e\u003cbr\u003eYear: %{x}\u003cbr\u003eIndex (2007=100): %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#0EA5E9","width":3},"marker":{"color":"#0EA5E9","size":6},"mode":"lines+markers","name":"Property Crime","opacity":1.0,"x":{"dtype":"i2","bdata":"1wfYB9kH2gfbB9wH3QfeB98H4AfhBw=="},"y":{"dtype":"f8","bdata":"AAAAAAAAWUCfFkcXD8tYQKB24bLBTlhA99GKzQQQV0CMeRL\u002f+atXQCBqY6FuYlxAgB37dpjpXkB6uLgj5yJgQGNxoRQcn2FAsgduQPsVYUAM5iqs\u002fxtjQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003ePublic Order\u003c\u002fb\u003e\u003cbr\u003eYear: %{x}\u003cbr\u003eIndex (2007=100): %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#F97316","width":1.5},"marker":{"color":"#F97316","size":4},"mode":"lines+markers","name":"Public Order","opacity":0.6,"x":{"dtype":"i2","bdata":"1wfYB9kH2gfbB9wH3QfeB98H4AfhBw=="},"y":{"dtype":"f8","bdata":"AAAAAAAAWUC++wcR4DtZQK76SRXYKlZAOv5tXJ3jU0B1mdVEVBdRQKxoprK7ikpAvTK239ErRUAlMRnmRRI9QNPeCNox7UBA\u002fniyxuCPR0Ap\u002fa9gldJAQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003eSex Offenses\u003c\u002fb\u003e\u003cbr\u003eYear: %{x}\u003cbr\u003eIndex (2007=100): %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#EC4899","width":3},"marker":{"color":"#EC4899","size":6},"mode":"lines+markers","name":"Sex Offenses","opacity":1.0,"x":{"dtype":"i2","bdata":"1wfYB9kH2gfbB9wH3QfeB98H4AfhBw=="},"y":{"dtype":"f8","bdata":"AAAAAAAAWUAKn+MvXw9cQB4uUgUnHlxAzTU1hi0jYECRKjjx6FZgQPDbTN4IwWFA8Dn+8vVgYUBKc02NYUtkQFropyRiemVAbBll5TzpZUDsEuAVS1FpQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003eViolent Crime\u003c\u002fb\u003e\u003cbr\u003eYear: %{x}\u003cbr\u003eIndex (2007=100): %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#EF4444","width":3},"marker":{"color":"#EF4444","size":6},"mode":"lines+markers","name":"Violent Crime","opacity":1.0,"x":{"dtype":"i2","bdata":"1wfYB9kH2gfbB9wH3QfeB98H4AfhBw=="},"y":{"dtype":"f8","bdata":"AAAAAAAAWUDFCDVM4KBZQNlD82ljOlhAJBv1EER6V0CuNK1NBW5XQCsi1YE1IFhAWnkTY35RWUAgyLuKgnNXQKTymsLG6FhAgOo0F1rCWEBT3uEX0uVYQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003eWeapons\u003c\u002fb\u003e\u003cbr\u003eYear: %{x}\u003cbr\u003eIndex (2007=100): %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#84CC16","width":1.5},"marker":{"color":"#84CC16","size":4},"mode":"lines+markers","name":"Weapons","opacity":0.6,"x":{"dtype":"i2","bdata":"1wfYB9kH2gfbB9wH3QfeB98H4AfhBw=="},"y":{"dtype":"f8","bdata":"AAAAAAAAWUDg1mczvj9bQMf3Rwomc1tABZM5CLj1WEAdBNz6bMZXQF4NSy\u002fiRFtAF3Gi8rTQXEApmMxBwK1dQAhvNHV+7V9Ah6UXcaLyX0C\u002f9pDLioFgQA=="},"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#f2f5fa"},"error_y":{"color":"#f2f5fa"},"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"baxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"line":{"color":"#283442"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"marker":{"line":{"color":"#283442"}},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#506784"},"line":{"color":"rgb(17,17,17)"}},"header":{"fill":{"color":"#2a3f5f"},"line":{"color":"rgb(17,17,17)"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#f2f5fa","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#f2f5fa"},"geo":{"bgcolor":"rgb(17,17,17)","lakecolor":"rgb(17,17,17)","landcolor":"rgb(17,17,17)","showlakes":true,"showland":true,"subunitcolor":"#506784"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"dark"},"paper_bgcolor":"rgb(17,17,17)","plot_bgcolor":"rgb(17,17,17)","polar":{"angularaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"bgcolor":"rgb(17,17,17)","radialaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"},"yaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"},"zaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"}},"shapedefaults":{"line":{"color":"#f2f5fa"}},"sliderdefaults":{"bgcolor":"#C8D4E3","bordercolor":"rgb(17,17,17)","borderwidth":1,"tickwidth":0},"ternary":{"aaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"baxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"bgcolor":"rgb(17,17,17)","caxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"title":{"x":0.05},"updatemenudefaults":{"bgcolor":"#506784","borderwidth":0},"xaxis":{"automargin":true,"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","zerolinewidth":2}}},"font":{"family":"DM Mono, monospace"},"title":{"font":{"family":"Playfair Display","size":20,"color":"#e8e8f0"},"text":"San Francisco Crime Trends before and after the 2008 Recession (2007-2017)","x":0.05,"xanchor":"left"},"xaxis":{"title":{"text":"Year","font":{"color":"#6b6b88"}},"tickvals":[2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017],"gridcolor":"#2a2a3d","linecolor":"#2a2a3d"},"yaxis":{"title":{"text":"Index (2007 = 100)","font":{"color":"#6b6b88"}},"gridcolor":"#2a2a3d","linecolor":"#2a2a3d"},"legend":{"font":{"color":"#e8e8f0"},"bgcolor":"rgba(19,19,28,0.8)","bordercolor":"#2a2a3d"},"hoverlabel":{"font":{"size":11,"color":"#F9FAFB"},"bgcolor":"#1F2937"},"margin":{"l":60,"r":40,"t":80,"b":100},"paper_bgcolor":"#0a0a0f","plot_bgcolor":"#13131c","shapes":[{"fillcolor":"rgba(220, 38, 38, 0.08)","layer":"below","line":{"color":"rgba(220, 38, 38, 0.45)","dash":"dash","width":1},"type":"rect","x0":2007.55,"x1":2009.45,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"#4fc3f7","dash":"dash"},"opacity":0.7,"type":"line","x0":0,"x1":1,"xref":"x domain","y0":100,"y1":100,"yref":"y"}],"annotations":[{"font":{"color":"#ef5350","size":9},"showarrow":false,"text":"Recession \u2192","x":2008.25,"xanchor":"left","y":148},{"font":{"color":"#ef5350","size":9},"showarrow":false,"text":"Post\u2011recession \u2192","x":2009.6,"xanchor":"left","y":148},{"font":{"color":"#6b6b88","size":10},"showarrow":false,"text":"SF Crime incident data from 2007 to 2017 grouped by Crime Type. Index shows relative change from 2007 (year before the crisis) baseline and the Recession period is shaded in red. \u003cbr\u003e Hover over the lines and explore specific categories and their index values for each year, values above 100 indicate rate growth.","x":0,"xanchor":"left","xref":"paper","y":-0.18,"yanchor":"top","yref":"paper"}]},                        {"responsive": true}                    )                };            </script>        </div>
-    </div>
-</body>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="badge">SF Crime Data</span>
+        <span class="site-title">2008 — 2014 Analysis</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-dot done"></div>
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+      </div>
+    </header>
+
+    <main>
+      <p class="chapter-label">Chapter 02</p>
+
+      <article class="card">
+        <h1 class="card-title">Indexed Crime Trends</h1>
+        <div class="card-divider"></div>
+        <div class="card-body">
+          <p>AAAA</p>
+          <div id="crime-chart" class="chart-container"></div>
+          <p class="figure-caption">
+            San Francisco crime incident data from 2007 to 2017 grouped by Crime
+            Type. Index shows relative change from 2007 baseline; the shaded red
+            band marks the recession period. Hover over the lines to explore
+            each category and year; values above 100 indicate growth.
+          </p>
+        </div>
+      </article>
+
+      <article class="card">
+        <h1 class="card-title">Understanding the Trends</h1>
+        <div class="card-divider"></div>
+        <div class="card-body">
+          <p>
+            Got it—data accuracy is king. I’ve swapped out the old logic for
+            your specific Plotly configuration, keeping the "recession" shading
+            and those precise indexed trends.
+          </p>
+          <br />
+          <p>
+            Here is the updated code with your corrected graph integrated into a
+            clean, dark-themed dashboard layout. The <code>bdata</code> strings
+            in the script contain your encoded coordinates, ensuring the lines
+            map exactly to the points you provided. I also cleaned up the
+            annotation placement slightly so "Recession Period" sits neatly
+            above the shaded area. Does the trend for "Sex Offenses" post-2012
+            surprise you as much as it does me?
+          </p>
+        </div>
+        <div class="cta-row">
+          <a class="arrow-link" href="../text-pages/background-info.html"
+            >← BACK</a
+          >
+          <a href="#" class="arrow-link">NEXT →</a>
+        </div>
+      </article>
+    </main>
+
+    <footer>
+      <a href="#" style="color: var(--text-lo); text-decoration: none"
+        >Source: DataSF / SFPD Historical Reports</a
+      >
+    </footer>
+
+    <script src="https://cdn.plot.ly/plotly-3.1.0.min.js"></script>
+    <script>
+      const graphData = [
+        {
+          hovertemplate:
+            "<b>Administrative</b><br>Year: %{x}<br>Index (2007=100): %{y:.1f}<extra></extra>",
+          line: { color: "#6366F1", width: 1.5 },
+          marker: { color: "#6366F1", size: 4 },
+          mode: "lines+markers",
+          name: "Administrative",
+          opacity: 0.6,
+          x: { dtype: "i2", bdata: "1wfYB9kH2gfbB9wH3QfeB98H4AfhBw==" },
+          y: {
+            dtype: "f8",
+            bdata:
+              "AAAAAAAAWUCAxgp7SH1VQLyWJu3BQVZAz7EgLfa/V0B3Y0hODtpXQN8W7fc8ildAilHg11jGWkBHDnVZqkFYQOj6gXKa41hAZ1BHf7rHVUBIugTCcB1TQA==",
+          },
+          type: "scatter",
+        },
+        {
+          hovertemplate:
+            "<b>Drug & Alcohol</b><br>Year: %{x}<br>Index (2007=100): %{y:.1f}<extra></extra>",
+          line: { color: "#F59E0B", width: 3 },
+          marker: { color: "#F59E0B", size: 6 },
+          mode: "lines+markers",
+          name: "Drug & Alcohol",
+          opacity: 1.0,
+          x: { dtype: "i2", bdata: "1wfYB9kH2gfbB9wH3QfeB98H4AfhBw==" },
+          y: {
+            dtype: "f8",
+            bdata:
+              "AAAAAAAAWUDq/B24ldFbQGOHSr5Z4VxAHZxcfGx0VkB7wp6wJ2xRQGx0cHLxMVBA0EIJpte+UUBE+skMFrxLQGUGC95J6UZA36xwuT8nRkCvYd10/g5BQA==",
+          },
+          type: "scatter",
+        },
+        {
+          hovertemplate:
+            "<b>Financial Crime</b><br>Year: %{x}<br>Index (2007=100): %{y:.1f}<extra></extra>",
+          line: { color: "#10B981", width: 1.5 },
+          marker: { color: "#10B981", size: 4 },
+          mode: "lines+markers",
+          name: "Financial Crime",
+          opacity: 0.6,
+          x: { dtype: "i2", bdata: "1wfYB9kH2gfbB9wH3QfeB98H4AfhBw==" },
+          y: {
+            dtype: "f8",
+            bdata:
+              "AAAAAAAAWUDs2dzLlDpZQLV/TtLVp1dAPpt7mVLHUkAZwiLy2PdRQJcIrJEqmlJAqkdPVvqCUkDLEBaRx75SQDRK/IwSv1NA8fG3bhe4UEA8tPspt2pPQA==",
+          },
+          type: "scatter",
+        },
+        {
+          hovertemplate:
+            "<b>Non-Criminal</b><br>Year: %{x}<br>Index (2007=100): %{y:.1f}<extra></extra>",
+          line: { color: "#64748B", width: 1.5 },
+          marker: { color: "#64748B", size: 4 },
+          mode: "lines+markers",
+          name: "Non-Criminal",
+          opacity: 0.6,
+          x: { dtype: "i2", bdata: "1wfYB9kH2gfbB9wH3QfeB98H4AfhBw==" },
+          y: {
+            dtype: "f8",
+            bdata:
+              "AAAAAAAAWUBXZUp25E1XQBpCUsQSdlZAbr2VHAdoWkC2GkiCo3VeQLjUENRPaWBAXNnbGT01ZEAe4PFUTJhhQGbZHUcQOGJAayOh/YfkYEAJgQRkJ4pgQA==",
+          },
+          type: "scatter",
+        },
+        {
+          hovertemplate:
+            "<b>Other/Suspicious</b><br>Year: %{x}<br>Index (2007=100): %{y:.1f}<extra></extra>",
+          line: { color: "#8B5CF6", width: 1.5 },
+          marker: { color: "#8B5CF6", size: 4 },
+          mode: "lines+markers",
+          name: "Other/Suspicious",
+          opacity: 0.6,
+          x: { dtype: "i2", bdata: "1wfYB9kH2gfbB9wH3QfeB98H4AfhBw==" },
+          y: {
+            dtype: "f8",
+            bdata:
+              "AAAAAAAAWUAZx2KH0tFcQNBoUB50+F1ApTiP/fpuW0AyqrtzIwxaQLwFjhES7lhAzMYnTcKyWUAYe1/+UZ9aQHl5sZ1npFpAPZxtAMI3WkDV/P285glZQA==",
+          },
+          type: "scatter",
+        },
+        {
+          hovertemplate:
+            "<b>Property Crime</b><br>Year: %{x}<br>Index (2007=100): %{y:.1f}<extra></extra>",
+          line: { color: "#0EA5E9", width: 3 },
+          marker: { color: "#0EA5E9", size: 6 },
+          mode: "lines+markers",
+          name: "Property Crime",
+          opacity: 1.0,
+          x: { dtype: "i2", bdata: "1wfYB9kH2gfbB9wH3QfeB98H4AfhBw==" },
+          y: {
+            dtype: "f8",
+            bdata:
+              "AAAAAAAAWUCfFkcXD8tYQKB24bLBTlhA99GKzQQQV0CMeRL/+atXQCBqY6FuYlxAgB37dpjpXkB6uLgj5yJgQGNxoRQcn2FAsgduQPsVYUAM5iqs/xtjQA==",
+          },
+          type: "scatter",
+        },
+        {
+          hovertemplate:
+            "<b>Public Order</b><br>Year: %{x}<br>Index (2007=100): %{y:.1f}<extra></extra>",
+          line: { color: "#F97316", width: 1.5 },
+          marker: { color: "#F97316", size: 4 },
+          mode: "lines+markers",
+          name: "Public Order",
+          opacity: 0.6,
+          x: { dtype: "i2", bdata: "1wfYB9kH2gfbB9wH3QfeB98H4AfhBw==" },
+          y: {
+            dtype: "f8",
+            bdata:
+              "AAAAAAAAWUC++wcR4DtZQK76SRXYKlZAOv5tXJ3jU0B1mdVEVBdRQKxoprK7ikpAvTK239ErRUAlMRnmRRI9QNPeCNox7UBA/niyxuCPR0Ap/a9gldJAQA==",
+          },
+          type: "scatter",
+        },
+        {
+          hovertemplate:
+            "<b>Sex Offenses</b><br>Year: %{x}<br>Index (2007=100): %{y:.1f}<extra></extra>",
+          line: { color: "#EC4899", width: 3 },
+          marker: { color: "#EC4899", size: 6 },
+          mode: "lines+markers",
+          name: "Sex Offenses",
+          opacity: 1.0,
+          x: { dtype: "i2", bdata: "1wfYB9kH2gfbB9wH3QfeB98H4AfhBw==" },
+          y: {
+            dtype: "f8",
+            bdata:
+              "AAAAAAAAWUAKn+MvXw9cQB4uUgUnHlxAzTU1hi0jYECRKjjx6FZgQPDbTN4IwWFA8Dn+8vVgYUBKc02NYUtkQFropyRiemVAbBll5TzpZUDsEuAVS1FpQA==",
+          },
+          type: "scatter",
+        },
+        {
+          hovertemplate:
+            "<b>Violent Crime</b><br>Year: %{x}<br>Index (2007=100): %{y:.1f}<extra></extra>",
+          line: { color: "#EF4444", width: 3 },
+          marker: { color: "#EF4444", size: 6 },
+          mode: "lines+markers",
+          name: "Violent Crime",
+          opacity: 1.0,
+          x: { dtype: "i2", bdata: "1wfYB9kH2gfbB9wH3QfeB98H4AfhBw==" },
+          y: {
+            dtype: "f8",
+            bdata:
+              "AAAAAAAAWUDFCDVM4KBZQNlD82ljOlhAJBv1EER6V0CuNK1NBW5XQCsi1YE1IFhAWnkTY35RWUAgyLuKgnNXQKTymsLG6FhAgOo0F1rCWEBT3uEX0uVYQA==",
+          },
+          type: "scatter",
+        },
+        {
+          hovertemplate:
+            "<b>Weapons</b><br>Year: %{x}<br>Index (2007=100): %{y:.1f}<extra></extra>",
+          line: { color: "#84CC16", width: 1.5 },
+          marker: { color: "#84CC16", size: 4 },
+          mode: "lines+markers",
+          name: "Weapons",
+          opacity: 0.6,
+          x: { dtype: "i2", bdata: "1wfYB9kH2gfbB9wH3QfeB98H4AfhBw==" },
+          y: {
+            dtype: "f8",
+            bdata:
+              "AAAAAAAAWUDg1mczvj9bQMf3Rwomc1tABZM5CLj1WEAdBNz6bMZXQF4NSy/iRFtAF3Gi8rTQXEApmMxBwK1dQAhvNHV+7V9Ah6UXcaLyX0C/9pDLioFgQA==",
+          },
+          type: "scatter",
+        },
+      ];
+
+      const layout = {
+        template: "plotly_dark",
+        font: { family: "DM Mono, monospace", color: "#e8e4dc" },
+        title: {
+          font: {
+            family: "DM Serif Display, serif",
+            size: 22,
+            color: "#e8e4dc",
+          },
+          text: "SF Crime Trends: Pre & Post 2008 Recession",
+          x: 0.05,
+          xanchor: "left",
+        },
+        xaxis: {
+          title: { text: "Year", font: { color: "#9a9690" } },
+          tickvals: [
+            2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
+          ],
+          gridcolor: "rgba(255,255,255,0.08)",
+          linecolor: "rgba(255,255,255,0.08)",
+        },
+        yaxis: {
+          title: { text: "Index (2007 = 100)", font: { color: "#9a9690" } },
+          gridcolor: "rgba(255,255,255,0.08)",
+          linecolor: "rgba(255,255,255,0.08)",
+        },
+        legend: {
+          font: { color: "#e8e4dc" },
+          bgcolor: "rgba(24,28,36,0.8)",
+          bordercolor: "rgba(255,255,255,0.08)",
+        },
+        hoverlabel: {
+          font: { size: 11, color: "#e8e4dc" },
+          bgcolor: "#13161c",
+        },
+        margin: { l: 60, r: 40, t: 80, b: 100 },
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+        shapes: [
+          {
+            fillcolor: "rgba(200, 64, 42, 0.08)",
+            layer: "below",
+            line: { color: "rgba(200, 64, 42, 0.45)", dash: "dash", width: 1 },
+            type: "rect",
+            x0: 2007.55,
+            x1: 2009.45,
+            xref: "x",
+            y0: 0,
+            y1: 1,
+            yref: "y domain",
+          },
+          {
+            line: { color: "#9a9690", dash: "dash" },
+            opacity: 0.5,
+            type: "line",
+            x0: 0,
+            x1: 1,
+            xref: "x domain",
+            y0: 100,
+            y1: 100,
+            yref: "y",
+          },
+        ],
+        annotations: [
+          {
+            font: { color: "#c8402a", size: 10 },
+            showarrow: false,
+            text: "Recession Period",
+            x: 2008.5,
+            xanchor: "center",
+            y: 1.05,
+            yref: "paper",
+          },
+        ],
+      };
+
+      Plotly.newPlot("crime-chart", graphData, layout, { responsive: true });
+    </script>
+  </body>
 </html>
