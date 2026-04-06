@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conclusion · SF Crime Atlas</title>
+    <!-- Fonts: DM Sans / DM Serif / DM Mono (inspired by reference) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0d0f12;
+            --surface: #13161c;
+            --card-bg: #181c24;
+            --border: rgba(255, 255, 255, 0.06);
+            --accent: #c8402a;
+            --accent-dim: #7a2418;
+            --gold: #c9a84c;
+            --text-hi: #e8e4dc;
+            --text-mid: #9a9690;
+            --text-lo: #4e4b47;
+            --mono: 'DM Mono', monospace;
+            --serif: 'DM Serif Display', serif;
+            --sans: 'DM Sans', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text-hi);
+            font-family: var(--sans);
+            font-weight: 300;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        /* subtle texture overlay (like reference) */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* main compact container */
+        .compact-container {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            width: 100%;
+            background: rgba(13, 15, 18, 0.6);
+            backdrop-filter: blur(2px);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5);
+        }
+
+        /* conclusion title */
+        .conclusion-title {
+            font-family: var(--serif);
+            font-size: 2rem;
+            font-weight: 500;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #ffffff 70%, #ffffff 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* conclusion content */
+        .conclusion-content {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text-hi);
+            margin-bottom: 2rem;
+        }
+
+        .conclusion-content p {
+            margin-bottom: 1.2rem;
+        }
+
+        .conclusion-content strong {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .conclusion-content em {
+            color: var(--text-mid);
+            font-style: italic;
+        }
+
+        /* key insights section */
+        .key-insights {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .insights-title {
+            font-family: var(--serif);
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .insights-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .insights-list li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.2rem;
+            position: relative;
+            color: var(--text-mid);
+        }
+
+        .insights-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* authors section */
+        .authors-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            color: var(--text-mid);
+        }
+
+        .authors-section strong {
+            color: var(--accent);
+        }
+
+        /* responsive */
+        @media (max-width: 700px) {
+            .compact-container {
+                padding: 1.5rem;
+            }
+            .conclusion-title {
+                font-size: 1.6rem;
+            }
+            .conclusion-content {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="compact-container">
+        <!-- Conclusion Title -->
+        <div class="conclusion-title">
+            Project Conclusion
+        </div>
+
+        <!-- Main Conclusion Content -->
+        <div class="conclusion-content">
+            <p>
+                Was there anything surprising or interesting in you found during the exploration? 
+            </p>
+
+            <p>
+                We certainly agree that there are some neighbourhoods more dangerous than the other. The 
+                areas around Tenderloin and South of Market are the nest of the crime that starts to
+                expand to Mission and Bayview over the years. Richmond stays the safest are throughout the period.
+                                
+            </p>
+                We can clearly see the increase of Property crime and the constant Violent crime in the city. 
+                We have seen that the rate of Sex offense is elevated but in comparison to other categories is not as significant.
+                Drug crimes appear less but have stable high rates in Tenderloin and Bayview.
+                Another interesting group of crimes that we can see in higher incidence are Administrative and Financial crimes located around Central district. 
+            <p>
+                 Reasons for people commiting crimes are complex. However, we can see that 
+                 social and economic factors play a significant role in human behaviour.
+                 The areas with higher crime rate are also the ones with higher poverty, lowerr education,
+                 and higher unemployement. These areas were also facing these disadvantages before the Great Recession,
+                 which results that financial crisis further worsened their situation and made them 
+                 more tend to find illegal ways to get what they need - money, housing, escape etc.
+            </p>
+        </div>
+
+        <!-- Key Insights Section -->
+        <div class="key-insights">
+            <div class="insights-title">Key Insights</div>
+            <ul class="insights-list">
+                <li>Replace this bullet point with your first key insight</li>
+                <li>Add another important finding or observation here</li>
+                <li>Include any significant trends or patterns discovered</li>
+                <li>Mention implications for policy or future research</li>
+            </ul>
+        </div>
+
+        <!-- Authors -->
+        <div class="authors-section">
+            <strong>Authors:</strong> Sofia Augustinova · s253859<br>
+            Zoja Palova · s225185
+        </div>
+    </div>
+</body>
+</html></content>
+<parameter name="filePath">c:\Users\zojap\OneDrive\Desktop\uni\social_data\sofiaa21.github.io\text-pages\conclusion.html

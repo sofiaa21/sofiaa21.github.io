@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contribution Table · SF Crime Atlas</title>
+    <!-- Fonts: DM Sans / DM Serif / DM Mono (inspired by reference) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0d0f12;
+            --surface: #13161c;
+            --card-bg: #181c24;
+            --border: rgba(255, 255, 255, 0.06);
+            --accent: #c8402a;
+            --accent-dim: #7a2418;
+            --gold: #c9a84c;
+            --text-hi: #e8e4dc;
+            --text-mid: #9a9690;
+            --text-lo: #4e4b47;
+            --mono: 'DM Mono', monospace;
+            --serif: 'DM Serif Display', serif;
+            --sans: 'DM Sans', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text-hi);
+            font-family: var(--sans);
+            font-weight: 300;
+            line-height: 1.4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        /* subtle texture overlay (like reference) */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* main compact container */
+        .compact-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(13, 15, 18, 0.6);
+            backdrop-filter: blur(2px);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            padding: 1.4rem 1.6rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5);
+        }
+
+        /* thank you + author area */
+        .thankyou-section {
+            margin-bottom: 1.6rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .thankyou-title {
+            font-family: var(--serif);
+            font-size: 1.5rem;
+            font-weight: 500;
+            letter-spacing: -0.2px;
+            background: linear-gradient(135deg, #ffffff 70%, #ffffff 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.25rem;
+        }
+        .authors {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            color: var(--text-mid);
+            letter-spacing: 0.3px;
+            margin-bottom: 0.9rem;
+        }
+        .authors span {
+            color: var(--accent);
+        }
+        .student-field {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: baseline;
+            margin-top: 0.6rem;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+        }
+        .student-field label {
+            color: var(--text-mid);
+            letter-spacing: 0.3px;
+        }
+        .student-field input {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.4rem 0.8rem;
+            font-family: var(--sans);
+            font-size: 0.75rem;
+            color: var(--text-hi);
+            outline: none;
+            transition: 0.2s;
+            width: 200px;
+        }
+        .student-field input:focus {
+            border-color: var(--accent);
+        }
+        .student-field .inline-hint {
+            color: var(--text-lo);
+            font-size: 0.65rem;
+        }
+
+        /* contribution table: 2 columns, 7 rows (card rows) */
+        .contrib-table {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            margin-top: 1rem;
+        }
+
+        .contrib-row {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            transition: all 0.2s;
+        }
+        .contrib-row:hover {
+            border-color: rgba(200, 64, 42, 0.5);
+            background: #1c212b;
+        }
+
+        /* left column (file info) */
+        .col-left {
+            flex: 1.2;
+            min-width: 180px;
+            background: rgba(0,0,0,0.2);
+            padding: 0.8rem 1rem;
+            border-right: 1px solid var(--border);
+            display: flex;
+            gap: 0.7rem;
+            align-items: center;
+        }
+        .file-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .file-name {
+            font-family: var(--mono);
+            font-weight: 500;
+            font-size: 0.8rem;
+            color: var(--text-hi);
+        }
+        .file-path {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            color: var(--text-mid);
+            background: rgba(255,255,255,0.03);
+            padding: 0.1rem 0.4rem;
+            border-radius: 16px;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        /* right column (contribution text) */
+        .col-right {
+            flex: 2.5;
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .contrib-text {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #d4d0c8;
+            flex: 1;
+        }
+        .contrib-text strong {
+            color: var(--accent);
+            font-weight: 500;
+        }
+        .contrib-link {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            color: var(--text-mid);
+            white-space: nowrap;
+        }
+        .contrib-link i {
+            font-size: 0.6rem;
+            margin-left: 4px;
+        }
+
+        /* responsive */
+        @media (max-width: 700px) {
+            .compact-container {
+                padding: 1rem;
+            }
+            .col-left {
+                flex-direction: row;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            .contrib-row {
+                flex-direction: column;
+            }
+            .student-field {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* small footer */
+        .mini-footer {
+            margin-top: 1.2rem;
+            padding-top: 0.8rem;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            color: var(--text-lo);
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+<div class="compact-container">
+    <!-- Thank You + Author Introduction + space for name/student number -->
+    <div class="thankyou-section">
+        <div class="thankyou-title">
+            Thank You for exploring with us! 
+        </div>
+        <div class="authors">
+            Authors:<br>
+            Sofia Augustinova · s253859<br>
+            Zoja Palova · s225185
+        </div>
+
+    <!-- Contribution Table: 2 columns, 7 rows (exactly as requested) -->
+    <div class="contrib-table">
+        <!-- ROW 1: intro.html -->
+        <div class="contrib-row">
+            <div class="col-left">
+                <div class="file-details">
+                    <div class="file-name">intro.html</div>
+                    <div class="file-path">text-pages/intro.html</div>
+                </div>
+            </div>
+            <div class="col-right">
+                <div class="contrib-text"><strong>Project introduction</strong> </div>
+                <div class="contrib-link">SA <i class="fas fa-arrow-right"></i></div>
+            </div>
+        </div>
+
+        <!-- ROW 2: background-info.html -->
+        <div class="contrib-row">
+            <div class="col-left">
+                <div class="file-details">
+                    <div class="file-name">background-info.html</div>
+                    <div class="file-path">text-pages/background-info.html</div>
+                </div>
+            </div>
+            <div class="col-right">
+                <div class="contrib-text"><strong>Data cleaning & indexing</strong> </div>
+                <div class="contrib-link"> SA </div>
+            </div>
+        </div>
+
+        <!-- ROW 2: background-info.html -->
+        <div class="contrib-row">
+            <div class="col-left">
+                <div class="file-details">
+                    <div class="file-name">sf_crime_indexed_trends.html</div>
+                    <div class="file-path">visualisations/sf_crime_indexed_trends.html</div>
+                </div>
+            </div>
+            <div class="col-right">
+                <div class="contrib-text"><strong>Data cleaning & indexing</strong> </div>
+                <div class="contrib-link"> SA </div>
+            </div>
+        </div>
+
+    <!-- ROW 6: sf_offenses_2007_vs_2017.html -->
+        <div class="contrib-row">
+            <div class="col-left">
+                <div class="file-details">
+                    <div class="file-name">sf_offenses_2007_vs_2017.html</div>
+                    <div class="file-path">visualizations/sf_offenses_2007_vs_2017.html</div>
+                </div>
+            </div>
+            <div class="col-right">
+                <div class="contrib-text"><strong>Sex Offense year comaprison </strong> </div>
+                <div class="contrib-link"> ZP </div>
+            </div>
+        </div>
+
+        <!-- ROW 5: sf_crime_timeline.html -->
+        <div class="contrib-row">
+            <div class="col-left">
+                <div class="file-details">
+                    <div class="file-name">sf_crime_timeline.html</div>
+                    <div class="file-path">visualizations/sf_crime_timeline.html</div>
+                </div>
+            </div>
+            <div class="col-right">
+                <div class="contrib-text"><strong>Interactive yearly crime timeline</strong></div>
+                <div class="contrib-link"> ZP</div>
+            </div>
+        </div>
+
+        
+
+    <div class="mini-footer">
+        7 core contributions · two‑column card layout · DataSF · SFPD 2007–2017
+    </div>
+</div>
+</body>
+</html>
