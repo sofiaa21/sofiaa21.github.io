@@ -3,6 +3,8 @@
 <head>
     
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -71,12 +73,12 @@
     
     
 <style>
-    :root { --bg:#0a0a0f; --surface:#13131c; --border:#2a2a3d; --text:#e8e8f0; --muted:#b0b0cc; }
+    :root { --bg:#0a0a0f; --surface:#13131c; --border:#2a2a3d; --text:#e8e8f0; --muted:#b0b0cc; --serif: 'DM Serif Display', serif; --sans: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace; }
     *{ margin:0; padding:0; box-sizing:border-box; }
     html, body {
         height:100%;
         background:var(--bg);
-        font-family:'DM Mono', monospace;
+        font-family:var(--sans);
         overflow:hidden;
     }
     .header {
@@ -86,7 +88,7 @@
         z-index:3000;
     }
     .header-brand {
-        font-family:'Playfair Display', serif;
+        font-family:var(--serif);
         font-size:2rem;
         font-weight:900; color:var(--text);
         margin-bottom:8px;
@@ -94,6 +96,7 @@
     }
     .header-brand span { color:#ef5350; }
     .header-meta {
+        font-family:var(--sans);
         font-size:1rem;   /* increased from 0.9rem */
         color:var(--muted);
         letter-spacing:0.3px;
@@ -106,7 +109,7 @@
         font-size:0.95rem;   /* increased from 0.85rem */
         color:var(--muted);
         text-align:center; z-index:3000;
-        font-family:'DM Mono', monospace;
+        font-family:var(--sans);
         line-height:1.4;
     }
     /* Map container – adjust for header/caption size */
@@ -253,8 +256,8 @@
 <!-- Header -->
 <div class="header">
     <div class="header-brand">San Francisco <span>Crime Timeline</span></div>
-    <div class="header-meta"> Now you can choose what crimes you want to explore! Use our interactive map to see different types of crimes and their geographical
-          and temporal distribution, filter by category and slide through the years to see the evolution of crime patterns around SF from 2007 until 2017 </div>
+    <div class="header-meta"> Use our interactive map to see different types of crimes and their geographical
+          and temporal distribution. Filter by category and slide through the years to see the evolution of crime patterns around SF from 2007 until 2017 </div>
     <div class="progress-bar" aria-label="Progress">
         <div class="progress-dot done"></div>
         <div class="progress-dot done"></div>
