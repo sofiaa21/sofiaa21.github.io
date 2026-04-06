@@ -38,6 +38,7 @@
             line-height: 1.6;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 1.5rem;
@@ -166,6 +167,85 @@
             color: var(--accent);
         }
 
+        .topbar {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 900px;
+            padding: 1.25rem 2.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .badge {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            border: 1px solid var(--accent-dim);
+            padding: 3px 8px;
+            border-radius: 2px;
+            text-transform: uppercase;
+        }
+
+        .site-title {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            color: var(--text-mid);
+            text-transform: uppercase;
+        }
+
+        .progress-bar {
+            display: flex;
+            gap: 6px;
+        }
+
+        .progress-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-lo);
+        }
+
+        .progress-dot.done {
+            background: var(--gold);
+        }
+
+        .progress-dot.active {
+            background: var(--accent);
+        }
+
+        .cta-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .arrow-link {
+            text-decoration: none;
+            color: var(--text-hi);
+            border: 1px solid var(--border);
+            padding: 10px 18px;
+            font-size: 0.8rem;
+            font-family: var(--mono);
+            transition: 0.2s;
+        }
+
+        .arrow-link:hover {
+            border-color: var(--accent);
+            background: rgba(200, 64, 42, 0.1);
+        }
+
         /* responsive */
         @media (max-width: 700px) {
             .compact-container {
@@ -181,6 +261,22 @@
     </style>
 </head>
 <body>
+<header class="topbar">
+      <div class="topbar-left">
+        <span class="badge">SF Crime Data</span>
+        <span class="site-title">2007 — 2017 · Post-Crisis Analysis</span>
+        </div>
+        <div class="progress-bar" aria-label="Progress">
+            <div class="progress-dot done"></div>
+            <div class="progress-dot done"></div>
+            <div class="progress-dot done"></div>
+            <div class="progress-dot done"></div>
+            <div class="progress-dot done"></div>
+            <div class="progress-dot done"></div>
+            <div class="progress-dot active"></div>
+        </div>
+    </header>
+
     <div class="compact-container">
         <!-- Conclusion Title -->
         <div class="conclusion-title">
@@ -224,6 +320,11 @@
                 <li>While crime remained concentrated in historically problematic areas the economic pressure of the era saw crime begin to expand into neighboring areas over the years following the crisis.</li>
                 <li>Sex Offenses had the steepest spike but due to large amount of changing policies, we can't confidently conclude it was caused by the Recession.</li>
             </ul>
+        </div>
+
+        <div class="cta-row">
+            <a class="arrow-link" href="../visualizations/sf_crime_timeline_map.html">← BACK</a>
+            <a class="arrow-link" href="../text-pages/contributions.html">NEXT →</a>
         </div>
 
         <!-- Authors -->

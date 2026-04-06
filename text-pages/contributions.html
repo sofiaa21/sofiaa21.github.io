@@ -153,10 +153,36 @@
             display: flex;
             flex-wrap: wrap;
             transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
         }
         .contrib-row:hover {
             border-color: rgba(200, 64, 42, 0.5);
             background: #1c212b;
+        }
+        .contrib-row:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .return-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1.5rem;
+            padding: 0.85rem 1.2rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.02);
+            color: var(--text-hi);
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .return-button:hover {
+            border-color: var(--accent);
+            background: rgba(200, 64, 42, 0.1);
         }
 
         /* left column (file info) */
@@ -264,13 +290,15 @@
         <div class="authors">
             Authors:<br>
             Sofia Augustinova · s253859<br>
-            Zoja Palova · s225185
+            Zoja Palova · s225185 <br>
+            In equal contribution and responsible for the following parts: <br>
         </div>
+    </div>
 
     <!-- Contribution Table: 2 columns, 7 rows (exactly as requested) -->
     <div class="contrib-table">
         <!-- ROW 1: intro.html -->
-        <div class="contrib-row">
+        <a class="contrib-row" href="intro.html">
             <div class="col-left">
                 <div class="file-details">
                     <div class="file-name">intro.html</div>
@@ -278,13 +306,13 @@
                 </div>
             </div>
             <div class="col-right">
-                <div class="contrib-text"><strong>Project introduction</strong> </div>
+                <div class="contrib-text"><strong>Project introduction</strong></div>
                 <div class="contrib-link">SA <i class="fas fa-arrow-right"></i></div>
             </div>
-        </div>
+        </a>
 
         <!-- ROW 2: background-info.html -->
-        <div class="contrib-row">
+        <a class="contrib-row" href="background-info.html">
             <div class="col-left">
                 <div class="file-details">
                     <div class="file-name">background-info.html</div>
@@ -292,27 +320,27 @@
                 </div>
             </div>
             <div class="col-right">
-                <div class="contrib-text"><strong>Data cleaning & indexing</strong> </div>
-                <div class="contrib-link"> SA </div>
+                <div class="contrib-text"><strong>Data cleaning & indexing</strong></div>
+                <div class="contrib-link">SA</div>
             </div>
-        </div>
+        </a>
 
-        <!-- ROW 2: background-info.html -->
-        <div class="contrib-row">
+        <!-- ROW 3: sf_crime_indexed_trends.html -->
+        <a class="contrib-row" href="../visualizations/sf_crime_indexed_trends.html">
             <div class="col-left">
                 <div class="file-details">
                     <div class="file-name">sf_crime_indexed_trends.html</div>
-                    <div class="file-path">visualisations/sf_crime_indexed_trends.html</div>
+                    <div class="file-path">visualizations/sf_crime_indexed_trends.html</div>
                 </div>
             </div>
             <div class="col-right">
-                <div class="contrib-text"><strong>Data cleaning & indexing</strong> </div>
-                <div class="contrib-link"> SA </div>
+                <div class="contrib-text"><strong>Crime trend inspection</strong></div>
+                <div class="contrib-link">SA</div>
             </div>
-        </div>
+        </a>
 
-    <!-- ROW 6: sf_offenses_2007_vs_2017.html -->
-        <div class="contrib-row">
+        <!-- ROW 4: sf_offenses_2007_vs_2017.html -->
+        <a class="contrib-row" href="../visualizations/sf_offenses_2007_vs_2017.html">
             <div class="col-left">
                 <div class="file-details">
                     <div class="file-name">sf_offenses_2007_vs_2017.html</div>
@@ -320,27 +348,27 @@
                 </div>
             </div>
             <div class="col-right">
-                <div class="contrib-text"><strong>Sex Offense year comaprison </strong> </div>
-                <div class="contrib-link"> ZP </div>
+                <div class="contrib-text"><strong>Sex Offense year comparison</strong></div>
+                <div class="contrib-link">ZP</div>
             </div>
-        </div>
+        </a>
 
         <!-- ROW 5: sf_crime_timeline.html -->
-        <div class="contrib-row">
+        <a class="contrib-row" href="../visualizations/sf_crime_timeline_map.html">
             <div class="col-left">
                 <div class="file-details">
                     <div class="file-name">sf_crime_timeline.html</div>
-                    <div class="file-path">visualizations/sf_crime_timeline.html</div>
+                    <div class="file-path">visualizations/sf_crime_timeline_map.html</div>
                 </div>
             </div>
             <div class="col-right">
                 <div class="contrib-text"><strong>Interactive yearly crime timeline</strong></div>
-                <div class="contrib-link"> ZP</div>
+                <div class="contrib-link">ZP</div>
             </div>
-        </div>
+        </a>
 
-        <!-- ROW 5: sf_crime_timeline.html -->
-        <div class="contrib-row">
+        <!-- ROW 6: conclusion.html -->
+        <a class="contrib-row" href="conclusion.html">
             <div class="col-left">
                 <div class="file-details">
                     <div class="file-name">conclusion.html</div>
@@ -349,12 +377,15 @@
             </div>
             <div class="col-right">
                 <div class="contrib-text"><strong>Conclusion</strong></div>
-                <div class="contrib-link"> ZP</div>
+                <div class="contrib-link">ZP</div>
             </div>
-        </div>
+        </a>
 
         
 
+
+</div>
+    <a class="return-button" href="intro.html">Return to Beginning</a>
 
 </div>
 </body>
