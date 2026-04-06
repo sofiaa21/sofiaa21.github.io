@@ -204,6 +204,50 @@
     .progress-dot.done {
         background:var(--gold, #ffc107);
     }
+    .cta-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex: 1;
+        gap: 20px;
+    }
+    .cta-row--left {
+        justify-content: flex-start;
+    }
+    .cta-row--right {
+        justify-content: flex-end;
+    }
+    .arrow-link {
+        text-decoration: none;
+        color: #ef5350;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: 0.2s;
+        font-size: 0.95rem;
+        font-weight: 600;
+        background: #000000;
+    }
+    .arrow-link:hover {
+        background: #1a1a1a;
+        color: #ff7070;
+    }
+    .arrow-icon {
+        font-size: 1.1rem;
+        transition: transform 0.2s;
+    }
+    .arrow-link--back:hover .arrow-icon {
+        transform: translateX(-4px);
+    }
+    .arrow-link--next:hover .arrow-icon {
+        transform: translateX(4px);
+    }
+    .caption-content {
+        flex: 2;
+        text-align: center;
+    }
 </style>
 
 <!-- Header -->
@@ -223,9 +267,23 @@
 </div>
 
 <!-- Caption -->
-<div class="caption">
-    ↑ Each dot represents a reported crime incident at its exact location, colored by crime group.<br>
-    Use the slider, play button, and legend toggles. Hover over dots for specific crime type, or over the map to see police district boundaries.
+<div class="caption" style="display: flex; align-items: center; justify-content: space-between;">
+    <div class="cta-row cta-row--left">
+        <a class="arrow-link arrow-link--back" href="../visualizations/sf_offenses_2007_vs_2017.html">
+            <span class="arrow-icon">←</span>
+            Back
+        </a>
+    </div>
+    <div class="caption-content">
+        ↑ Each dot represents a reported crime incident at its exact location, colored by crime group.<br>
+        Use the slider, play button, and legend toggles. Hover over dots for specific crime type, or over the map to see police district boundaries.
+    </div>
+    <div class="cta-row cta-row--right">
+        <a class="arrow-link arrow-link--next" href="#">
+            Next
+            <span class="arrow-icon">→</span>
+        </a>
+    </div>
 </div>
 
 <!-- Slider panel (smaller) -->
