@@ -52,7 +52,6 @@
         overflow-x: hidden;
       }
 
-      /* Grid overlay texture */
       body::before {
         content: "";
         position: fixed;
@@ -69,7 +68,6 @@
         z-index: 0;
       }
 
-      /* Vignette */
       body::after {
         content: "";
         position: fixed;
@@ -81,6 +79,15 @@
         );
         pointer-events: none;
         z-index: 0;
+      }
+
+      /* ── ALL INLINE LINKS ── */
+      a {
+        color: var(--gold);
+        text-decoration: underline;
+      }
+      a:hover {
+        color: var(--accent);
       }
 
       /* ── TOP BAR ── */
@@ -109,6 +116,7 @@
         padding: 3px 8px;
         border-radius: 2px;
         text-transform: uppercase;
+        text-decoration: none;
       }
 
       .site-title {
@@ -146,9 +154,21 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        align-items: stretch;
+        align-items: center;
         justify-content: center;
         padding: 3rem 1.5rem;
+      }
+
+      .chapter-label {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.1s ease forwards;
+        align-self: flex-start;
       }
 
       .card-grid {
@@ -165,35 +185,20 @@
         }
       }
 
-      /* ── CHAPTER LABEL ── */
-      .chapter-label {
-        font-family: var(--mono);
-        font-size: 10px;
-        letter-spacing: 0.22em;
-        color: var(--gold);
-        text-transform: uppercase;
-        margin-bottom: 1.5rem;
-        opacity: 0;
-        animation: fadeUp 0.6s 0.1s ease forwards;
-      }
-
       /* ── CARD ── */
       .card {
-        width: 100%;
-        max-width: 640px;
         background: var(--card-bg);
         border: 1px solid var(--border);
         border-radius: 6px;
         padding: 2.5rem 2.75rem;
         position: relative;
+        /* KEY FIX: flex column so CTA sticks to bottom */
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
         opacity: 0;
         animation: fadeUp 0.7s 0.25s ease forwards;
       }
 
-      /* accent stripe top-left */
       .card::before {
         content: "";
         position: absolute;
@@ -235,6 +240,7 @@
         opacity: 0.6;
       }
 
+      /* KEY FIX: card-body grows to push CTA down */
       .card-body {
         font-size: 0.92rem;
         line-height: 1.75;
@@ -243,24 +249,37 @@
         flex: 1;
       }
 
+      .card-body p {
+        margin-bottom: 1rem;
+      }
+      .card-body p:last-child {
+        margin-bottom: 0;
+      }
+
       .card-body strong {
         color: var(--text-hi);
         font-weight: 500;
       }
 
-      .cta-row {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        margin-top: 2rem;
+      .card-body h2 {
+        font-family: var(--serif);
+        font-size: 1.1rem;
+        color: var(--text-hi);
+        margin: 1.5rem 0 0.75rem;
+        font-weight: 400;
       }
 
-      .cta-row--left {
-        justify-content: flex-start;
+      .card-body ul,
+      .card-body li {
+        margin-bottom: 0.5rem;
       }
 
-      .arrow-link--back .arrow-icon {
-        margin-right: 0.75rem;
+      /* ── INLINE LINK OVERRIDES inside cards ── */
+      .card-body a {
+        color: var(--gold);
+      }
+      .card-body a:hover {
+        color: var(--accent);
       }
 
       /* stat pills */
@@ -287,7 +306,6 @@
         font-weight: 500;
         color: var(--text-hi);
       }
-
       .stat-label {
         font-size: 0.7rem;
         color: var(--text-mid);
@@ -298,12 +316,10 @@
       /* district list */
       .district-list {
         list-style: none;
-        padding: 0;
-        margin: 0;
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
         gap: 0.5rem;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
       }
 
       .district-list li {
@@ -337,7 +353,14 @@
         border-bottom: 1px solid var(--border);
       }
 
-      .focus-crime-table th {
+      .focus-crime-table thead th {
+        font-family: var(--mono);
+        font-weight: 500;
+        color: var(--text-hi);
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .focus-crime-table tbody th {
         font-family: var(--mono);
         font-weight: 500;
         color: var(--text-hi);
@@ -350,24 +373,46 @@
         color: var(--text-mid);
       }
 
-      /* ── ARROW / CTA ── */
+      .district-image {
+        width: 100%;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        display: block;
+        margin: 1.5rem 0 0.75rem;
+      }
+
+      .image-caption {
+        font-size: 0.8rem;
+        color: var(--text-lo);
+        line-height: 1.6;
+      }
+
+      /* hypothesis list */
+      .hypothesis-evidence {
+        list-style: disc;
+        padding-left: 1.25rem;
+        margin: 0.75rem 0 1.25rem;
+      }
+
+      .hypothesis-evidence li {
+        margin-bottom: 0.75rem;
+      }
+
+      /* ── CTA ROW ── */
       .cta-row {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin-top: 0.25rem;
+        margin-top: 1.5rem;
+        /* push to bottom of flex card */
+        margin-top: auto;
+        padding-top: 1.5rem;
       }
 
+      .cta-row--left {
+        justify-content: flex-start;
+      }
       .cta-row--right {
         justify-content: flex-end;
-      }
-
-      .cta-hint {
-        font-family: var(--mono);
-        font-size: 10px;
-        letter-spacing: 0.14em;
-        color: var(--text-lo);
-        text-transform: uppercase;
       }
 
       .arrow-link {
@@ -391,12 +436,13 @@
       .arrow-link:hover {
         border-color: var(--accent);
         background: rgba(200, 64, 42, 0.08);
+        color: var(--text-hi);
+        text-decoration: none;
       }
 
       .arrow-link:hover .arrow-icon {
         transform: translateX(5px);
       }
-
       .arrow-link--back:hover .arrow-icon {
         transform: translateX(-5px);
       }
@@ -408,7 +454,7 @@
         font-size: 1.1rem;
       }
 
-      /* ── BOTTOM BAR ── */
+      /* ── FOOTER ── */
       footer {
         position: relative;
         z-index: 10;
@@ -423,10 +469,14 @@
         font-family: var(--mono);
         font-size: 10px;
         letter-spacing: 0.12em;
-        color: var(--text-lo);
+        color: var(--gold);
+        text-decoration: underline;
       }
 
-      /* data strip */
+      .footer-note:hover {
+        color: var(--accent);
+      }
+
       .data-strip {
         font-family: var(--mono);
         font-size: 9px;
@@ -444,7 +494,6 @@
         );
       }
 
-      /* ── ANIMATIONS ── */
       @keyframes fadeUp {
         from {
           opacity: 0;
@@ -458,38 +507,42 @@
     </style>
   </head>
   <body>
-    <!-- TOP BAR -->
     <header class="topbar">
       <div class="topbar-left">
         <span class="badge">SF Crime Data</span>
-        <span class="site-title">2008 — 2014 · Post-Crisis Analysis</span>
+        <span class="site-title">2007 — 2017 · Post-Crisis Analysis</span>
       </div>
       <div class="progress-bar" aria-label="Progress">
-        <div class="progress-dot done" title="Introduction"></div>
-        <div class="progress-dot active" title="Crime Trends"></div>
-        <div class="progress-dot" title="Districts"></div>
-        <div class="progress-dot" title="Categories"></div>
-        <div class="progress-dot" title="Conclusion"></div>
+        <div class="progress-dot done"></div>
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
       </div>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main>
-      <p class="chapter-label"> 01</p>
+      <p class="chapter-label">Our Scope</p>
 
       <div class="card-grid">
+        <!-- CARD 1: Districts -->
         <article class="card" role="main">
-          <p class="card-eyebrow">Basic info</p>
-
-          <h1 class="card-title">San Francisco police districts</h1>
-
+          <p class="card-eyebrow">District information</p>
+          <h1 class="card-title">San Francisco Police Districts</h1>
           <div class="card-divider"></div>
 
           <div class="card-body">
             <p>
-              A quick reference for the SFPD patrol districts and the focus crimes used in this investigation.
+              A quick reference for the SFPD patrol districts and the focus
+              crimes used in this investigation. There are 10 police districts,
+              each with a slightly different crime profile. Notoriously, the
+              most dangerous ones are
+              <strong>Tenderloin</strong>, <strong>Bayview</strong> and
+              <strong>Mission</strong>, while the safest are
+              <strong>Park</strong> and <strong>Richmond</strong>.
             </p>
-
             <h2>District list</h2>
             <ul class="district-list">
               <li>Taraval</li>
@@ -503,8 +556,96 @@
               <li>Tenderloin</li>
               <li>Central</li>
             </ul>
+            <h2>District map</h2>
+            <figure>
+              <img
+                class="district-image"
+                src="../images/sf-police-districts.png"
+                alt="San Francisco police district boundaries map"
+              />
+              <figcaption class="image-caption">
+                Map of San Francisco police districts. Source:
+                <a
+                  href="https://sfocii.org/sites/default/files/2024-11/Item%202%20-%20San%20Francisco%20Police%20District%20Boundary%20Analysis.pdf"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  SF Police Department Boundary Analysis Services </a
+                >.
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="cta-row cta-row--left">
+            <a
+              class="arrow-link arrow-link--back"
+              href="../text-pages/intro.html"
+            >
+              <span class="arrow-icon">←</span>
+              Back
+            </a>
+          </div>
+        </article>
+
+        <!-- CARD 2: Our Scope -->
+        <article class="card">
+          <p class="card-eyebrow">Context</p>
+          <h1 class="card-title">Our scope</h1>
+          <div class="card-divider"></div>
+
+          <div class="card-body">
+            <p>
+              Much like the Great Depression of the 1930s or the Great Inflation
+              of the 1970s, the 2008 financial crisis remains a critical case
+              study for economists and policymakers. This assignment
+              investigates the localized impact of this recession on San
+              Francisco, analyzing whether economic hardship overlapped with
+              shifts in specific crime types — such as property, financial, or
+              violent crime — using SFPD data from 2007 to 2017.
+            </p>
+            <p>
+              We believe this decade-long window allows us to observe both the
+              immediate shock of the crisis and the long-term trends of the
+              subsequent recovery. Our hypothesis is supported by several key
+              findings:
+            </p>
+            <ul class="hypothesis-evidence">
+              <li>
+                <strong>Systemic impact:</strong> According to the
+                <a
+                  href="https://www.unodc.org/documents/data-and-analysis/statistics/crime/GIVAS_Final_Report.pdf"
+                  target="_blank"
+                  >United Nations Office on Drugs and Crime</a
+                >, economic crises are historically linked to higher crime rates
+                as social safety nets are strained.
+              </li>
+              <li>
+                <strong>Economic impact:</strong> Research from the Federal
+                Reserve Bank of San Francisco found that ten years after the
+                crisis, U.S. GDP remained approximately 7% lower than projected
+                — roughly <strong>$70,000 in lost lifetime income</strong> per
+                American. (<a
+                  href="https://www.britannica.com/money/financial-crisis-of-2007-2008/Key-events-of-the-crisis"
+                  target="_blank"
+                  >Britannica</a
+                >).
+              </li>
+              <li>
+                <strong>Labor market collapse:</strong> Between 2007 and 2009,
+                approximately 7.5 million jobs were lost, doubling the
+                unemployment rate to nearly 10% by 2010 (<a
+                  href="https://www.britannica.com/money/financial-crisis-of-2007-2008/Key-events-of-the-crisis"
+                  target="_blank"
+                  >Britannica</a
+                >).
+              </li>
+            </ul>
 
             <h2>Focus crimes and categories</h2>
+            <p>
+              The following table shows the 10 focus crime groups used in this
+              investigation.
+            </p>
             <div class="table-wrapper">
               <table class="focus-crime-table">
                 <thead>
@@ -516,7 +657,10 @@
                 <tbody>
                   <tr>
                     <th>Property Crime</th>
-                    <td>VEHICLE THEFT, TRESPASS, ARSON, LARCENY/THEFT, BURGLARY, VANDALISM, STOLEN PROPERTY, BAD CHECKS</td>
+                    <td>
+                      VEHICLE THEFT, TRESPASS, ARSON, LARCENY/THEFT, BURGLARY,
+                      VANDALISM, STOLEN PROPERTY, BAD CHECKS
+                    </td>
                   </tr>
                   <tr>
                     <th>Violent Crime</th>
@@ -524,11 +668,15 @@
                   </tr>
                   <tr>
                     <th>Non-Criminal</th>
-                    <td>NON-CRIMINAL, MISSING PERSON, RECOVERED VEHICLE, SUICIDE</td>
+                    <td>
+                      NON-CRIMINAL, MISSING PERSON, RECOVERED VEHICLE, SUICIDE
+                    </td>
                   </tr>
                   <tr>
                     <th>Financial Crime</th>
-                    <td>FRAUD, FORGERY/COUNTERFEITING, BRIBERY, EMBEZZLEMENT</td>
+                    <td>
+                      FRAUD, FORGERY/COUNTERFEITING, BRIBERY, EMBEZZLEMENT
+                    </td>
                   </tr>
                   <tr>
                     <th>Other/Suspicious</th>
@@ -536,7 +684,10 @@
                   </tr>
                   <tr>
                     <th>Drug & Alcohol</th>
-                    <td>DRIVING UNDER THE INFLUENCE, DRUG/NARCOTIC, DRUNKENNESS, LIQUOR LAWS</td>
+                    <td>
+                      DRIVING UNDER THE INFLUENCE, DRUG/NARCOTIC, DRUNKENNESS,
+                      LIQUOR LAWS
+                    </td>
                   </tr>
                   <tr>
                     <th>Administrative</th>
@@ -548,42 +699,26 @@
                   </tr>
                   <tr>
                     <th>Sex Offenses</th>
-                    <td>SEX OFFENSES, FORCIBLE, SEX OFFENSES, NON FORCIBLE</td>
+                    <td>SEX OFFENSES, FORCIBLE; SEX OFFENSES, NON FORCIBLE, HUMAN TRAFFICKING</td>
                   </tr>
                   <tr>
                     <th>Public Order</th>
-                    <td>PROSTITUTION, LOITERING, DISORDERLY CONDUCT, GAMBLING, PORNOGRAPHY/OBSCENE MAT, TREA</td>
+                    <td>
+                      PROSTITUTION, LOITERING, DISORDERLY CONDUCT, GAMBLING,
+                      PORNOGRAPHY/OBSCENE MATERIAL
+                    </td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
-          <div class="cta-row cta-row--left">
-            <a class="arrow-link arrow-link--back" href="../text-pages/intro.html">
-              <span class="arrow-icon">←</span>
-              Back
-            </a>
-          </div>
-        </article>
 
-        <article class="card">
-          <p class="card-eyebrow">Context</p>
-
-          <h1 class="card-title">Source links and relevance</h1>
-
-          <div class="card-divider"></div>
-
-          <div class="card-body">
-            <p>
-              These references explain how local reporting, policy, and historical context relate to our analysis of crime patterns.
-            </p>
-
-            <ul class="source-list">
-              <!-- Add linked article titles here, then explain how each source relates to the investigation -->
-            </ul>
-          </div>
+          <!-- Pinned to bottom of card via margin-top: auto on .cta-row -->
           <div class="cta-row cta-row--right">
-            <a class="arrow-link" href="../visualizations/sf_crime_indexed_trends.html">
+            <a
+              class="arrow-link"
+              href="../visualizations/sf_crime_indexed_trends.html"
+            >
               Next
               <span class="arrow-icon">→</span>
             </a>
@@ -592,12 +727,17 @@
       </div>
     </main>
 
-    <!-- FOOTER -->
     <footer>
       <a
         class="footer-note"
         href="https://data.sfgov.org/Public-Safety/Police-Department-Incident-Reports-Historical-2003/tmnf-yvry/about_data"
-        >Source: SFPD Incident Reports via DataSF</a
+      >
+        Source: SFPD Incident Reports via DataSF
+      </a>
+      <span class="data-strip">
+        LARCENY/THEFT · ASSAULT · VANDALISM · DRUG/NARCOTIC · BURGLARY · ROBBERY
+        · FRAUD · VEHICLE THEFT · TRESPASS · MISSING PERSON ·
+      </span>
     </footer>
   </body>
 </html>

@@ -196,6 +196,11 @@
         line-height: 1.6;
       }
 
+      .card-body strong {
+        color: var(--text-hi);
+        font-weight: 700;
+      }
+
       .cta-row {
         display: flex;
         justify-content: space-between;
@@ -241,34 +246,43 @@
     <header class="topbar">
       <div class="topbar-left">
         <span class="badge">SF Crime Data</span>
-        <span class="site-title">2008 — 2014 Analysis</span>
+        <span class="site-title">2007 — 2017 · Post-Crisis Analysis</span>
       </div>
-      <div class="progress-bar">
+      <div class="progress-bar" aria-label="Progress">
+        <div class="progress-dot done"></div>
         <div class="progress-dot done"></div>
         <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
         <div class="progress-dot"></div>
         <div class="progress-dot"></div>
       </div>
     </header>
 
     <main>
-      <p class="chapter-label">Chapter 02</p>
+      <p class="chapter-label">Inspecting Crime Trends</p>
 
       <article class="card">
         <h1 class="card-title">Indexed Crime Trends</h1>
         <div class="card-divider"></div>
         <div class="card-body">
-          <p>We pin point four major crime groups that we expect to be impacted by The Great Recession - Drugs & Alcohol, Property Crime, Violent Crime and Sex Offenses
-            Based on human behavior theories and prior research, we hypothesize that with
-            increased financial struggle, unemployement and collapsing housing market, crimes such as burglary or theft in general,
-            will increase. To cope with stress, substance abuse is expected to rise and with it related offecnces - public or sexual violence.
-            </p>
+          <p>
+            We pin-point four major crime groups that we expect to be impacted
+            by The Great Recession - Drugs & Alcohol, Property Crime, Violent
+            Crime and Sex Offenses. Based on human behavior theories and prior
+            research, we hypothesize that with increased financial struggle,
+            unemployement and collapsing housing market, crimes such as burglary
+            or theft in general, will increase. To cope with stress, substance
+            abuse is expected to rise and with it related offenses - public and
+            sexual violence.
+          </p>
           <div id="crime-chart" class="chart-container"></div>
           <p class="figure-caption">
-            ↑ San Francisco crime incident data from 2007 to 2017 grouped by Crime
-            Type. Index (100) shows relative change from 2007 baseline; the shaded red
-            band marks the recession period. Hover over the lines to explore
-            each category and year; index values above 100 indicate growth.
+            ↑ San Francisco crime incident data from 2007 to 2017 grouped by
+            Crime Type. Index (100) shows relative change from 2007 baseline;
+            the shaded red band marks represent the Recession period. Hover over
+            the lines to explore each category and year individually; the index
+            values above 100 indicate crime category growth.
           </p>
         </div>
       </article>
@@ -278,21 +292,36 @@
         <div class="card-divider"></div>
         <div class="card-body">
           <p>
-            Our findings showed a significant increase in Property Crime where index number in 2017 was around 50% higher and Sex Offences 
-            the index number has risen twice as high. Property Crime can be linked to collapse of the housing bubble - rise in homelessness and
-            foreclosed properties offering targets for burglaries or squatting and drug abuse. The steepest increase is seen in the category of Sex offences - which includes prostitution, human trafficking and
-            and can also be linked to homelesness and poverty, we are going to explore this in the next chapter.
+            Our findings showed a significant increase in Property Crime where
+            the
+            <strong> index number in 2017 increased by 50% </strong> comaring to
+            the baseline. Property Crime can be linked to
+            <strong> collapse of the housing bubble </strong> - rise in
+            homelessness and foreclosed properties offering targets for
+            burglaries or squatting and drug abuse. The steepest increase is
+            seen in the category of
+            <strong>Sex offences - 100% index value increase </strong>. This can
+            also be linked to homelesness and poverty, we are going to explore
+            this category further in the next chapter.
           </p>
-          <p>
-            Violent crime stays relatively stable and Drug & Alcohol decreased dramatically which does not support our first hypothesis saying that people get more violent 
-            or turn to substances when there is significant outside pressure.
           <br />
+          <p>
+            Violent crime rates stay relatively stable and Drug & Alcohol rates
+            <strong> decreased dramatically </strong>, which does not support
+            our first hypothesis saying that people get more violent or turn to
+            substances when there is significant outside pressure.
+            <br />
+          </p>
         </div>
         <div class="cta-row">
           <a class="arrow-link" href="../text-pages/background-info.html"
             >← BACK</a
           >
-          <a href="#" class="arrow-link">NEXT →</a>
+          <a
+            href="../visualizations/sf_offenses_2007_vs_2017.html"
+            class="arrow-link"
+            >NEXT →</a
+          >
         </div>
       </article>
     </main>

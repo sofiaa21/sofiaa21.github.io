@@ -52,7 +52,6 @@
         overflow-x: hidden;
       }
 
-      /* Grid overlay texture */
       body::before {
         content: "";
         position: fixed;
@@ -69,7 +68,6 @@
         z-index: 0;
       }
 
-      /* Vignette */
       body::after {
         content: "";
         position: fixed;
@@ -148,7 +146,92 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 3rem 1.5rem;
+        padding: 2rem 1.5rem;
+        max-width: 1100px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      /* ── ARTICLE GALLERY (FIXED STYLING) ── */
+      .article-gallery {
+        position: relative;
+        width: 100%;
+        max-width: 900px;
+        height: 100px;
+        margin-bottom: 3.5rem;
+        display: flex;
+        justify-content: center;
+      }
+
+      .article-card {
+        position: absolute;
+        width: 280px;
+        background: #fff;
+        border-radius: 2px;
+        overflow: hidden;
+        opacity: 0;
+        box-shadow:
+          0 10px 30px rgba(0, 0, 0, 0.5),
+          0 2px 5px rgba(0, 0, 0, 0.3);
+        transition:
+          transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+          box-shadow 0.3s ease;
+        cursor: pointer;
+      }
+
+      .article-card:hover {
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+        z-index: 100 !important;
+        transform: translateY(-15px) scale(1.05) rotate(0deg) !important;
+      }
+
+      .article-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* Fixed Spread Positioning */
+      .article-card:nth-child(1) {
+        left: 0%;
+        --rot: -10deg;
+        top: 20px;
+        z-index: 1;
+      }
+      .article-card:nth-child(2) {
+        left: 22%;
+        --rot: -4deg;
+        top: 5px;
+        z-index: 2;
+      }
+      .article-card:nth-child(3) {
+        left: 45%;
+        --rot: 2deg;
+        top: 15px;
+        z-index: 3;
+      }
+      .article-card:nth-child(4) {
+        left: 68%;
+        --rot: 8deg;
+        top: 25px;
+        z-index: 4;
+      }
+
+      /* Animated-in state */
+      .article-card.visible {
+        animation: cardPop 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+
+      @keyframes cardPop {
+        0% {
+          opacity: 0;
+          transform: translateY(30px) rotate(0deg);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) rotate(var(--rot));
+        }
       }
 
       /* ── CHAPTER LABEL ── */
@@ -158,9 +241,8 @@
         letter-spacing: 0.22em;
         color: var(--gold);
         text-transform: uppercase;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         opacity: 0;
-        animation: fadeUp 0.6s 0.1s ease forwards;
       }
 
       /* ── CARD ── */
@@ -173,10 +255,8 @@
         padding: 2.5rem 2.75rem;
         position: relative;
         opacity: 0;
-        animation: fadeUp 0.7s 0.25s ease forwards;
       }
 
-      /* accent stripe top-left */
       .card::before {
         content: "";
         position: absolute;
@@ -219,33 +299,45 @@
       }
 
       .card-body {
-        font-size: 0.92rem;
-        line-height: 1.75;
+        font-size: 1rem;
+        line-height: 1.8;
+        letter-spacing: 0.01em;
         color: var(--text-mid);
         margin-bottom: 1.75rem;
       }
 
-      .card-body strong {
-        color: var(--text-hi);
-        font-weight: 500;
+      .card-body::first-letter {
+        float: left;
+        font-family: var(--serif);
+        font-size: 3rem;
+        line-height: 0.8;
+        margin-right: 0.16em;
+        color: var(--accent);
+        font-weight: 700;
       }
 
-      /* stat pills */
       .stat-row {
         display: flex;
         gap: 0.75rem;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        justify-content: space-between;
         margin-bottom: 2rem;
+        overflow-x: auto;
       }
 
       .stat-pill {
         display: flex;
-        align-items: baseline;
-        gap: 6px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        min-height: 76px;
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid var(--border);
         border-radius: 3px;
-        padding: 6px 12px;
+        padding: 10px 12px;
+        flex: 1 1 0;
+        min-width: 0;
       }
 
       .stat-value {
@@ -262,24 +354,8 @@
         text-transform: uppercase;
       }
 
-      /* ── ARROW / CTA ── */
-      .cta-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-top: 0.25rem;
-      }
-
-      .cta-hint {
-        font-family: var(--mono);
-        font-size: 10px;
-        letter-spacing: 0.14em;
-        color: var(--text-lo);
-        text-transform: uppercase;
-      }
-
       .arrow-link {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 12px;
         text-decoration: none;
@@ -289,11 +365,8 @@
         padding: 10px 18px;
         font-size: 0.8rem;
         letter-spacing: 0.08em;
-        transition:
-          border-color 0.2s,
-          background 0.2s;
+        transition: all 0.2s;
         font-family: var(--sans);
-        font-weight: 400;
       }
 
       .arrow-link:hover {
@@ -301,18 +374,17 @@
         background: rgba(200, 64, 42, 0.08);
       }
 
-      .arrow-link:hover .arrow-icon {
-        transform: translateX(5px);
+      .cta-row {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
       }
 
       .arrow-icon {
-        display: inline-block;
-        transition: transform 0.2s ease;
         color: var(--accent);
-        font-size: 1.1rem;
       }
 
-      /* ── BOTTOM BAR ── */
+      /* ── FOOTER ── */
       footer {
         position: relative;
         z-index: 10;
@@ -326,26 +398,8 @@
       .footer-note {
         font-family: var(--mono);
         font-size: 10px;
-        letter-spacing: 0.12em;
         color: var(--text-lo);
-      }
-
-      /* data strip */
-      .data-strip {
-        font-family: var(--mono);
-        font-size: 9px;
-        letter-spacing: 0.1em;
-        color: var(--text-lo);
-        white-space: nowrap;
-        overflow: hidden;
-        max-width: 40%;
-        mask-image: linear-gradient(
-          to right,
-          transparent,
-          black 15%,
-          black 85%,
-          transparent
-        );
+        text-decoration: none;
       }
 
       /* ── ANIMATIONS ── */
@@ -362,26 +416,76 @@
     </style>
   </head>
   <body>
-    <!-- TOP BAR -->
     <header class="topbar">
       <div class="topbar-left">
         <span class="badge">SF Crime Data</span>
-        <span class="site-title">2008 — 2014 · Post-Crisis Analysis</span>
+        <span class="site-title">2007 — 2017 · Post-Crisis Analysis</span>
       </div>
       <div class="progress-bar" aria-label="Progress">
-        <div class="progress-dot active" title="Introduction"></div>
-        <div class="progress-dot" title="Crime Trends"></div>
-        <div class="progress-dot" title="Districts"></div>
-        <div class="progress-dot" title="Categories"></div>
-        <div class="progress-dot" title="Conclusion"></div>
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
       </div>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main>
-      <p class="chapter-label"> 01</p>
+      <div class="article-gallery" id="gallery">
+        <div class="article-card" id="art-1">
+          <a
+            href="https://www.epi.org/news/prolonged-recession-pushes-more-people-into-poverty/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="../images/article-1-economic-policy-institute.png"
+              alt="Economic Policy Institute"
+            />
+          </a>
+        </div>
+        <div class="article-card" id="art-2">
+          <a
+            href="https://www.weforum.org/stories/2015/03/do-recessions-increase-crime/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="../images/article-2-shrunk-wealth.png"
+              alt="Crime Increase"
+            />
+          </a>
+        </div>
+        <div class="article-card" id="art-3">
+          <a
+            href="https://www.kcl.ac.uk/archive/news/ioppn/records/2013/july/people-with-mental-health-problems-hit-harder-by-recession"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="../images/article-3-poor-californians.png"
+              alt="Mental health issues"
+            />
+          </a>
+        </div>
+        <div class="article-card" id="art-4">
+          <a
+            href="https://www.ucdavis.edu/curiosity/news/domestic-violence-increased-great-recession"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="../images/article-4-domestic-violence.png"
+              alt="Domestic Violence"
+            />
+          </a>
+        </div>
+      </div>
 
-      <article class="card" role="main">
+      <p class="chapter-label" id="chapter-label">01</p>
+
+      <article class="card" id="main-card">
         <p class="card-eyebrow">Introduction</p>
 
         <h1 class="card-title">
@@ -391,12 +495,19 @@
         <div class="card-divider"></div>
 
         <p class="card-body">
-          <!-- When the financial crisis hit in 2008, unemployment in San Francisco
-          nearly doubled within two years. The following visualization traces
-          <strong>annual crime incident reports</strong>
-          from 2003 to 2017, asking whether economic collapse left a visible
-          scar in the data — or whether the city's crime landscape moved to its
-          own rhythm. -->
+          The 2008 financial crisis was one of the most impactuful economic
+          catastrophies of recent history. Leaving thousands of Americans
+          jobless and homeless, the crisis left the country in a state of
+          tumoltuous peril it has been trying to come back from for almost two
+          decades.
+          <br /><br />
+          This was an occassion that touched every aspect of life of a regular
+          person. Rising house prices, inflation and unemployment were some of
+          the many consequences of the crisis. When such impactful situations
+          happen that push many people into poverty and insecurity, it is common
+          that criminal rates spike. We will be investigating the criminal
+          impact of the 2008 recession in San Francisco, and the decade of
+          uncertainty that followed.
         </p>
 
         <div class="stat-row">
@@ -423,12 +534,36 @@
       </article>
     </main>
 
-    <!-- FOOTER -->
     <footer>
       <a
         class="footer-note"
         href="https://data.sfgov.org/Public-Safety/Police-Department-Incident-Reports-Historical-2003/tmnf-yvry/about_data"
-        >Source: SFPD Incident Reports via DataSF</a
+      >
+        Source: SFPD Incident Reports via DataSF
+      </a>
     </footer>
+
+    <script>
+      const cards = ["art-1", "art-2", "art-3", "art-4"];
+      const delays = [200, 600, 1000, 1400];
+      const labelDelay = 2000;
+      const cardDelay = 2300;
+
+      cards.forEach((id, i) => {
+        setTimeout(() => {
+          document.getElementById(id).classList.add("visible");
+        }, delays[i]);
+      });
+
+      setTimeout(() => {
+        document.getElementById("chapter-label").style.animation =
+          "fadeUp 0.6s ease forwards";
+      }, labelDelay);
+
+      setTimeout(() => {
+        document.getElementById("main-card").style.animation =
+          "fadeUp 0.75s ease forwards";
+      }, cardDelay);
+    </script>
   </body>
 </html>
