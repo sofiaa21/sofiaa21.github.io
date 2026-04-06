@@ -180,6 +180,30 @@
         background:#ef5350;
         border-radius:3px;
     }
+    .progress-bar {
+        position:absolute;
+        top:20px;
+        right:40px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:6px;
+        flex-direction:row;
+        flex-wrap:nowrap;
+    }
+    .progress-dot {
+        width:6px;
+        height:6px;
+        border-radius:50%;
+        background:var(--text-lo, var(--muted));
+        transition:background 0.3s;
+    }
+    .progress-dot.active {
+        background:var(--accent, #ef5350);
+    }
+    .progress-dot.done {
+        background:var(--gold, #ffc107);
+    }
 </style>
 
 <!-- Header -->
@@ -187,6 +211,15 @@
     <div class="header-brand">San Francisco <span>Crime Timeline</span></div>
     <div class="header-meta"> Now you can choose what crimes you want to explore! Use our interactive map to see different types of crimes and their geographical
           and temporal distribution, filter by category and slide through the years to see the evolution of crime patterns around SF from 2007 until 2017 </div>
+    <div class="progress-bar" aria-label="Progress">
+        <div class="progress-dot done"></div>
+        <div class="progress-dot done"></div>
+        <div class="progress-dot done"></div>
+        <div class="progress-dot done"></div>
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+    </div>
 </div>
 
 <!-- Caption -->
